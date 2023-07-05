@@ -5,7 +5,7 @@ export class ParameterStoreService {
     private client: SSMClient;
 
     constructor() {
-        this.client = new SSMClient({ apiVersion: '2014-11-06' })
+        this.client = new SSMClient({ apiVersion: '2014-11-06', region: 'sa-east-1' })
     }
 
     async BuscarSegredo(caminhoSegredo: string, descriptografar: boolean = false) {
