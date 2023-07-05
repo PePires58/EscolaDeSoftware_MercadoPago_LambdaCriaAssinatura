@@ -1,0 +1,5 @@
+Environment="prod",
+BaseUrlMercadoPago="https://api.mercadopago.com",
+SecretMercadoPagoPath="/escoladesoftware/prod/mercadopagokey",
+SecretMercadoPagoUseEncryption=true,
+TokenSecretParameterName="/escoladesoftware/prod/tokenkey"

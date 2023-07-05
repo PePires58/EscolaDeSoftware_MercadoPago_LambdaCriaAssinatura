@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Escola de software - Mercado Pago - Lambda para criar assinatura
+
+Parameters:
+  Environment:
+    Description: Environment
+    Type: String
+  BaseUrlMercadoPago:
+    Description: Url Base do mercado pago
+    Type: String
+  SecretMercadoPagoPath:
+    Description: Caminho do secret do mercado pago
+    Type: String
+  SecretMercadoPagoUseEncryption:
+    Description: Secret do mercado pago usa encryption?
+    Type: String
+  TokenSecretParameterName:
+    Description: Token secret parameter name
+    Type: String
+  SecretRotaApiMercadoPago:
+    Description: Caminho do segredo da rota da api do mercado pago
+    Type: String
+
+Resources:
+  MercadoPagoLambdaCriaAssinaturaFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Lambda para criar assinatura no mercado pago
+      FunctionName: !Join ["_", [!Ref Environment, "escoladesoftware-mercadopago-lambdacriaassinaturafn"]]      
+      Handler: app.lambdaHandler
+      CodeUri: src/
+      Runtime: nodejs18.x
+      Timeout: 3
+      MemorySize: 256
+      Architectures:
+        - x86_64
+      Policies:
+        - AmazonSSMReadOnlyAccess
+      Environment:
+        Variables:
+          UsuariosTableName: !Ref UsuariosTableName
+          BaseUrlMercadoPago: !Ref BaseUrlMercadoPago
+          SecretMercadoPagoUseEncryption: !Ref SecretMercadoPagoUseEncryption
+          SecretMercadoPagoPath: !Ref SecretMercadoPagoPath          
+          TokenSecretParameterName: !Ref TokenSecretParameterName
+          SecretRotaApiMercadoPago: !Ref SecretRotaApiMercadoPago
+    Tags: 
+      - Key: Ambiente
+        Value: !Ref Environment
+      - Key: Microservico
+        Value: MercadoPago
+      - Key: Servico
+        Value: Lambda
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        Sourcemap: true
+        EntryPoints: 
+        - app.ts
+
+  MercadoPagoLambdaCriaAssinaturaLogGroup: 
+    Type: AWS::Logs::LogGroup
+    Properties: 
+      LogGroupName: !Join ["", ["/aws/lambda/", !Ref Environment, "_escoladesoftware-mercadopago-lambdacriaassinaturafn"]]
+      RetentionInDays: 3
+      Tags: 
+        - Key: Ambiente
+          Value: !Ref Environment
+        - Key: Microservico
+          Value: MercadoPago
+        - Key: Servico
+          Value: LogGroup
